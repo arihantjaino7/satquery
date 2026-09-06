@@ -1,0 +1,1315 @@
+<title>SatQuery AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+  :root {
+    --ground:      #E9EAE4;
+    --surface:     #F7F8F4;
+    --surface-2:   #E0E2D9;
+    --ink:         #191C19;
+    --ink-2:       #4C534D;
+    --ink-3:       #767D77;
+    --rule:        #C9CDC2;
+    --rule-soft:   #D9DCD2;
+    --accent:      #0E6A69;
+    --accent-ink:  #0A4F4E;
+    --accent-soft: #D2E3E0;
+    --sev-high:    #9E3316;
+    --sev-high-bg: #F3DED6;
+    --sev-med:     #8A6410;
+    --sev-med-bg:  #F0E5CC;
+    --sev-low:     #3B6E38;
+    --sev-low-bg:  #DCE7D8;
+    --shadow:      0 1px 2px rgba(25,28,25,.06), 0 8px 24px -12px rgba(25,28,25,.18);
+
+    --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --f-body:    "Newsreader", Georgia, "Times New Roman", serif;
+    --f-mono:    "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #141715;
+      --surface:     #1B1F1C;
+      --surface-2:   #262B27;
+      --ink:         #E7EAE4;
+      --ink-2:       #A9B1AA;
+      --ink-3:       #838B84;
+      --rule:        #313731;
+      --rule-soft:   #262B27;
+      --accent:      #4EBDB2;
+      --accent-ink:  #7FD3CA;
+      --accent-soft: #1E3A37;
+      --sev-high:    #E58B6B;
+      --sev-high-bg: #3A231B;
+      --sev-med:     #DDB65C;
+      --sev-med-bg:  #352D16;
+      --sev-low:     #8CC183;
+      --sev-low-bg:  #1F2E1D;
+      --shadow:      0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:      #141715;
+    --surface:     #1B1F1C;
+    --surface-2:   #262B27;
+    --ink:         #E7EAE4;
+    --ink-2:       #A9B1AA;
+    --ink-3:       #838B84;
+    --rule:        #313731;
+    --rule-soft:   #262B27;
+    --accent:      #4EBDB2;
+    --accent-ink:  #7FD3CA;
+    --accent-soft: #1E3A37;
+    --sev-high:    #E58B6B;
+    --sev-high-bg: #3A231B;
+    --sev-med:     #DDB65C;
+    --sev-med-bg:  #352D16;
+    --sev-low:     #8CC183;
+    --sev-low-bg:  #1F2E1D;
+    --shadow:      0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.7);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-size: 17px;
+    line-height: 1.62;
+    margin: 0;
+    padding: 0 24px 96px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  .col  { max-width: 68ch; }
+
+  /* ---------- masthead ---------- */
+  .masthead {
+    border-bottom: 2px solid var(--ink);
+    padding: 56px 0 22px;
+    margin-bottom: 40px;
+  }
+  .stamp {
+    font-family: var(--f-mono);
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+    margin-bottom: 26px;
+  }
+  .stamp span:not(:last-child)::after {
+    content: "";
+  }
+  h1 {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: clamp(2.6rem, 6.5vw, 4.1rem);
+    line-height: .98;
+    letter-spacing: -.028em;
+    margin: 0 0 14px;
+    text-wrap: balance;
+  }
+  .deck {
+    font-size: 1.16rem;
+    color: var(--ink-2);
+    max-width: 60ch;
+    margin: 0;
+  }
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 28px;
+    margin-top: 26px;
+    font-family: var(--f-mono);
+    font-size: 12px;
+    color: var(--ink-3);
+    letter-spacing: .02em;
+  }
+  .meta-row b { color: var(--ink-2); font-weight: 500; }
+
+  /* ---------- sections ---------- */
+  section { margin: 0 0 68px; scroll-margin-top: 24px; }
+
+  .sec-head {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    border-top: 1px solid var(--ink);
+    padding-top: 14px;
+    margin-bottom: 26px;
+  }
+  .sec-num {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .1em;
+    color: var(--accent);
+    padding-top: 6px;
+    flex: none;
+  }
+  h2 {
+    font-family: var(--f-display);
+    font-weight: 600;
+    font-size: clamp(1.5rem, 3vw, 1.95rem);
+    letter-spacing: -.018em;
+    line-height: 1.14;
+    margin: 0;
+    text-wrap: balance;
+  }
+  h3 {
+    font-family: var(--f-display);
+    font-weight: 600;
+    font-size: 1.09rem;
+    letter-spacing: -.008em;
+    margin: 38px 0 12px;
+  }
+  h4 {
+    font-family: var(--f-mono);
+    font-weight: 600;
+    font-size: 11.5px;
+    letter-spacing: .11em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 28px 0 10px;
+  }
+  p { margin: 0 0 16px; }
+  a { color: var(--accent-ink); text-decoration-color: var(--accent-soft); text-underline-offset: 2px; }
+  a:hover { text-decoration-color: currentColor; }
+  a:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  strong { font-weight: 600; }
+
+  ul, ol { margin: 0 0 16px; padding-left: 1.25em; }
+  li { margin-bottom: 7px; }
+  li::marker { color: var(--ink-3); }
+
+  code {
+    font-family: var(--f-mono);
+    font-size: .855em;
+    background: var(--surface-2);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* ---------- callouts ---------- */
+  .verdict {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--accent);
+    padding: 16px 20px;
+    margin: 0 0 28px;
+    box-shadow: var(--shadow);
+  }
+  .verdict .lbl {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 6px;
+  }
+  .verdict p { margin: 0; font-size: 1.02rem; }
+  .verdict p + p { margin-top: 10px; }
+
+  .note {
+    border: 1px dashed var(--rule);
+    background: var(--surface);
+    padding: 14px 18px;
+    margin: 0 0 22px;
+    font-size: .96rem;
+    color: var(--ink-2);
+  }
+  .note strong { color: var(--ink); }
+
+  /* ---------- BLUF grid ---------- */
+  .bluf {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin-bottom: 60px;
+  }
+  .bluf > div { background: var(--surface); padding: 18px 20px 20px; }
+  .bluf dt {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 8px;
+  }
+  .bluf dd {
+    margin: 0;
+    font-size: .97rem;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  .bluf .hero {
+    font-family: var(--f-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -.015em;
+    line-height: 1.15;
+    display: block;
+    margin-bottom: 6px;
+    color: var(--accent-ink);
+  }
+
+  /* ---------- tables ---------- */
+  .tbl-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    margin: 0 0 24px;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 660px;
+    font-size: .875rem;
+    font-variant-numeric: tabular-nums;
+  }
+  th {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    text-align: left;
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--ink);
+    white-space: nowrap;
+    vertical-align: bottom;
+  }
+  td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--rule-soft);
+    vertical-align: top;
+    line-height: 1.45;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  td.mono, th.mono { font-family: var(--f-mono); font-size: .8rem; white-space: nowrap; }
+  td.nm { font-family: var(--f-display); font-weight: 600; font-size: .9rem; white-space: nowrap; }
+
+  .pill {
+    display: inline-block;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    padding: 2.5px 7px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+  .p-ok   { background: var(--sev-low-bg);  color: var(--sev-low); }
+  .p-warn { background: var(--sev-med-bg);  color: var(--sev-med); }
+  .p-bad  { background: var(--sev-high-bg); color: var(--sev-high); }
+  .p-neu  { background: var(--surface-2);   color: var(--ink-2); }
+
+  /* ---------- requirement blocks ---------- */
+  .req {
+    border-top: 1px solid var(--rule);
+    padding: 18px 0 6px;
+    display: grid;
+    grid-template-columns: 92px 1fr;
+    gap: 4px 20px;
+  }
+  .req:first-of-type { border-top: 1px solid var(--ink); }
+  .req-id {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: .04em;
+    padding-top: 3px;
+  }
+  .req-body h3 { margin: 0 0 8px; font-size: 1.02rem; }
+  .req-body p, .req-body ul { font-size: .96rem; }
+  .req-body > :last-child { margin-bottom: 12px; }
+  .ac {
+    background: var(--surface);
+    border-left: 2px solid var(--accent-soft);
+    padding: 10px 14px;
+    margin: 12px 0;
+    font-size: .9rem;
+    color: var(--ink-2);
+  }
+  .ac b {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: .11em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+  @media (max-width: 640px) {
+    .req { grid-template-columns: 1fr; gap: 6px; }
+  }
+
+  /* ---------- code blocks ---------- */
+  pre {
+    font-family: var(--f-mono);
+    font-size: 12.5px;
+    line-height: 1.6;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    padding: 16px 18px;
+    overflow-x: auto;
+    margin: 0 0 22px;
+    color: var(--ink);
+    tab-size: 2;
+  }
+  pre .c { color: var(--ink-3); }
+  pre .k { color: var(--accent-ink); font-weight: 500; }
+
+  /* ---------- pipeline diagram ---------- */
+  .flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    margin: 0 0 24px;
+  }
+  .flow-node {
+    display: grid;
+    grid-template-columns: 118px 1fr;
+    gap: 18px;
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--rule-soft);
+    align-items: baseline;
+  }
+  .flow-node:last-child { border-bottom: none; }
+  .flow-name {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent-ink);
+    letter-spacing: .02em;
+  }
+  .flow-desc { font-size: .92rem; color: var(--ink-2); }
+  .flow-desc em { color: var(--ink); font-style: normal; font-weight: 500; }
+  .flow-branch {
+    padding: 9px 18px 9px 154px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--rule-soft);
+    font-family: var(--f-mono);
+    font-size: 11px;
+    color: var(--ink-2);
+    letter-spacing: .01em;
+  }
+  @media (max-width: 640px) {
+    .flow-node { grid-template-columns: 1fr; gap: 4px; }
+    .flow-branch { padding-left: 18px; }
+  }
+
+  /* ---------- risk rows ---------- */
+  .risk {
+    display: grid;
+    grid-template-columns: 30px 1fr 118px;
+    gap: 16px;
+    padding: 16px 0;
+    border-top: 1px solid var(--rule);
+    align-items: start;
+  }
+  .risk:first-of-type { border-top: 1px solid var(--ink); }
+  .risk-rank {
+    font-family: var(--f-display);
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--rule);
+    line-height: 1;
+    padding-top: 2px;
+  }
+  .risk-t {
+    font-family: var(--f-display);
+    font-weight: 600;
+    font-size: 1rem;
+    margin: 0 0 5px;
+    letter-spacing: -.005em;
+  }
+  .risk-d { font-size: .93rem; color: var(--ink-2); margin: 0 0 8px; }
+  .risk-m { font-size: .89rem; margin: 0; color: var(--ink); }
+  .risk-m b {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .risk-tag { text-align: right; padding-top: 3px; }
+  @media (max-width: 700px) {
+    .risk { grid-template-columns: 26px 1fr; }
+    .risk-tag { grid-column: 2; text-align: left; padding-top: 0; }
+  }
+
+  /* ---------- timeline ---------- */
+  .phase {
+    border-top: 1px solid var(--rule);
+    padding: 15px 0;
+    display: grid;
+    grid-template-columns: 128px 1fr;
+    gap: 6px 20px;
+  }
+  .phase:first-of-type { border-top: 1px solid var(--ink); }
+  .phase-when {
+    font-family: var(--f-mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .05em;
+    color: var(--accent);
+    text-transform: uppercase;
+    padding-top: 3px;
+  }
+  .phase-what { font-size: .95rem; }
+  .phase-what b { font-family: var(--f-display); font-weight: 600; display: block; margin-bottom: 4px; font-size: 1rem; }
+  .phase-what ul { margin: 6px 0 0; }
+  .phase-what li { font-size: .93rem; color: var(--ink-2); }
+  @media (max-width: 640px) { .phase { grid-template-columns: 1fr; } }
+
+  details {
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    padding: 12px 16px;
+    margin: 0 0 16px;
+  }
+  summary {
+    font-family: var(--f-mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    cursor: pointer;
+  }
+  details[open] summary { margin-bottom: 12px; }
+
+  footer {
+    border-top: 2px solid var(--ink);
+    padding-top: 20px;
+    margin-top: 20px;
+    font-family: var(--f-mono);
+    font-size: 11.5px;
+    color: var(--ink-3);
+    line-height: 1.7;
+  }
+  footer a { color: var(--ink-2); }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="stamp">
+      <span>SIH 2026 · SIH26167</span>
+      <span>ISRO / SAC</span>
+      <span>Product Requirements · v1.0</span>
+    </div>
+    <h1>SatQuery AI</h1>
+    <p class="deck">An agentic vision–language assistant that answers natural-language questions about satellite imagery — single-image, bi-temporal, and cross-modal optical/SAR — with an auditable execution trace.</p>
+    <div class="meta-row">
+      <span><b>Build window</b> 36 h finale + pre-work</span>
+      <span><b>Team</b> Solo / small, B.Tech CSE</span>
+      <span><b>Stack</b> FastAPI · LangGraph · React</span>
+      <span><b>Status</b> Feasibility verified 30 Aug 2026</span>
+    </div>
+  </header>
+
+  <dl class="bluf">
+    <div>
+      <dt>Adaptation strategy</dt>
+      <dd><span class="hero">One training run, two requirements</span>A 12-channel S1+S2 encoder on BigEarthNet satisfies the mandatory fine-tune <em>and</em> becomes the optical–SAR fusion component.</dd>
+    </div>
+    <div>
+      <dt>Fine-tune timing</dt>
+      <dd><span class="hero">Before the finale</span>All adaptation ships as a frozen checkpoint. No training happens inside the 36 hours.</dd>
+    </div>
+    <div>
+      <dt>Highest dataset risk</dt>
+      <dd><span class="hero">CDVQA has no images</span>The repo is QA JSON only. Imagery comes from SECOND via a single Google Drive link. Mirror it now.</dd>
+    </div>
+    <div>
+      <dt>Orchestration principle</dt>
+      <dd><span class="hero">Deterministic selection</span>The LLM classifies the task; a rule resolver picks the model. Only the trace is graded, so it must be reproducible.</dd>
+    </div>
+  </dl>
+
+  <!-- ================= 1 ================= -->
+  <section id="context">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2>Problem, users, and scope boundary</h2>
+    </div>
+
+    <div class="col">
+      <p>An ISRO analyst holding a Cartosat-2S scene, a RISAT/EOS-04 SAR scene, or a bi-temporal pair currently reaches for a GIS desktop and a trained eye. The question they actually want to ask is a sentence: <em>“what changed here between these two dates?”</em>, <em>“is there standing water under this cloud-free optical patch?”</em>, <em>“how many buildings in the north-east quadrant?”</em></p>
+
+      <p>Generic VLMs answer these badly. They hallucinate on nadir-view imagery, cannot read a 13-band uint16 GeoTIFF, produce nothing meaningful on SAR backscatter, and — critically for evaluation — give no account of <em>how</em> they arrived at an answer.</p>
+
+      <p>SatQuery AI is a task-routing agent over a registry of remote-sensing-adapted models, with a validation gate on the front and a structured execution trace on the back.</p>
+    </div>
+
+    <h3>Primary user scenarios</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Scenario</th><th>Input</th><th>Expected output</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="mono">US-1</td><td>Ask a factual question about one scene</td><td class="mono">1 × GeoTIFF + text</td><td>Answer + confidence + trace</td></tr>
+          <tr><td class="mono">US-2</td><td>Get a scene description without asking a specific question</td><td class="mono">1 × GeoTIFF</td><td>Caption + land-cover labels</td></tr>
+          <tr><td class="mono">US-3</td><td>Locate a described object</td><td class="mono">1 × GeoTIFF + referring text</td><td>Answer + bounding boxes on overlay</td></tr>
+          <tr><td class="mono">US-4</td><td>Compare two dates over the same area</td><td class="mono">2 × GeoTIFF (bi-temporal)</td><td>Change summary + change mask + change QA</td></tr>
+          <tr><td class="mono">US-5</td><td>Combine optical and radar evidence</td><td class="mono">2 × GeoTIFF (optical + SAR)</td><td>Fused interpretation naming each sensor's contribution</td></tr>
+          <tr><td class="mono">US-6</td><td>Audit why the system answered as it did</td><td class="mono">A completed run</td><td>Full replayable trace, exportable</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Non-goals</h3>
+    <div class="col">
+      <p>Explicitly out of scope for the finale build. Each of these is a defensible cut, and saying so up front is cheaper than discovering it at hour 30.</p>
+      <ul>
+        <li><strong>Pixel-level segmentation masks from the VLM.</strong> Bounding-box grounding satisfies the PS. GeoPixel-class mask decoders add a SAM-2 dependency for marginal credit.</li>
+        <li><strong>Training any model during the 36 hours.</strong> Adaptation is pre-work.</li>
+        <li><strong>Multi-temporal sequences beyond two images.</strong> The PS requires bi-temporal.</li>
+        <li><strong>On-the-fly orthorectification or co-registration.</strong> The hidden set is stated as pre-georeferenced and co-registered. We <em>verify</em> co-registration; we do not <em>perform</em> it. A misaligned pair produces a warning, not a silent resample.</li>
+        <li><strong>User accounts, persistence, multi-tenancy.</strong> Single-session web app.</li>
+        <li><strong>Beating SOTA on any benchmark.</strong> We report honest numbers on a fixed eval subset.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= 2 ================= -->
+  <section id="data">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2>Data requirements</h2>
+    </div>
+
+    <div class="verdict">
+      <span class="lbl">Verdict</span>
+      <p>All four named datasets are publicly downloadable with no registration wall. <strong>One is a trap:</strong> the CDVQA repository contains only question/answer JSON — roughly 55 MB across 12 files. The bi-temporal imagery it references lives in the SECOND dataset, distributed as a single Google Drive link with no stated license. That link is the most brittle dependency in the entire project.</p>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>Dataset</th><th>Role</th><th>Source</th><th>Size</th><th>Format</th><th>License</th><th>Access</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="nm">BigEarthNet v2.0<br><span style="font-family:var(--f-mono);font-weight:400;font-size:.78rem;color:var(--ink-3)">(reBEN)</span></td>
+            <td>Adaptation<br>(mandatory)</td>
+            <td>Zenodo <span class="mono">10891137</span></td>
+            <td class="mono">S2 ≈59 GiB<br>S1 ≈51 GiB</td>
+            <td class="mono">.tar.zst<br>GeoTIFF patches<br>+ parquet meta</td>
+            <td class="mono">CDLA-Permissive-1.0</td>
+            <td><span class="pill p-ok">Open</span></td>
+          </tr>
+          <tr>
+            <td class="nm">VRSBench</td>
+            <td>Caption /<br>grounding / VQA eval</td>
+            <td>HF <span class="mono">xiang709/VRSBench</span></td>
+            <td class="mono">≈12.5 GB</td>
+            <td class="mono">JSON + images<br>(DOTA-v2, DIOR)</td>
+            <td class="mono">CC-BY-NC-4.0</td>
+            <td><span class="pill p-ok">Open</span></td>
+          </tr>
+          <tr>
+            <td class="nm">RSVQA-LR</td>
+            <td>VQA eval</td>
+            <td>Zenodo <span class="mono">6344334</span></td>
+            <td class="mono">150.5 MB</td>
+            <td class="mono">ZIP + JSON<br>772 img @256²</td>
+            <td class="mono">CC-BY-4.0</td>
+            <td><span class="pill p-ok">Open</span></td>
+          </tr>
+          <tr>
+            <td class="nm">RSVQA-HR</td>
+            <td>VQA eval</td>
+            <td>Zenodo <span class="mono">6344367</span></td>
+            <td class="mono">14.4 GB</td>
+            <td class="mono">TAR + JSON<br>10,659 img @512²</td>
+            <td class="mono">CC-BY-4.0</td>
+            <td><span class="pill p-ok">Open</span></td>
+          </tr>
+          <tr>
+            <td class="nm">CDVQA</td>
+            <td>Change-VQA eval</td>
+            <td>GH <span class="mono">YZHJessica/CDVQA</span></td>
+            <td class="mono">≈55 MB<br>(JSON only)</td>
+            <td class="mono">JSON</td>
+            <td class="mono">Apache-2.0</td>
+            <td><span class="pill p-warn">No imagery</span></td>
+          </tr>
+          <tr>
+            <td class="nm">SECOND</td>
+            <td>CDVQA imagery<br>(hard dependency)</td>
+            <td>captain-whu SCD page<br>→ Google Drive</td>
+            <td class="mono">4,662 pairs<br>512² RGB</td>
+            <td class="mono">PNG/TIF pairs<br>+ change labels</td>
+            <td class="mono">Unstated</td>
+            <td><span class="pill p-bad">Single link</span></td>
+          </tr>
+          <tr>
+            <td class="nm">Bhoonidhi</td>
+            <td>Realistic ISRO<br>input samples</td>
+            <td>bhoonidhi.nrsc.gov.in</td>
+            <td class="mono">per-scene</td>
+            <td class="mono">GeoTIFF</td>
+            <td class="mono">ISRO open data</td>
+            <td><span class="pill p-warn">Login req.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col">
+      <h4>Requirements</h4>
+    </div>
+
+    <div class="req">
+      <div class="req-id">DR-1</div>
+      <div class="req-body">
+        <h3>Mirror SECOND before anything else</h3>
+        <p>Download the SECOND archive and store a second copy outside Google Drive (institutional drive, S3, a physical disk). Google Drive links to research datasets go quota-limited or dead without warning, and CDVQA is a <em>mandatory</em> evaluation dataset with no substitute.</p>
+        <div class="ac"><b>Acceptance</b>SECOND extracted locally, image filenames cross-checked against <code>Test_images.json</code> from the CDVQA repo, with a documented match rate ≥ 95%.</div>
+      </div>
+    </div>
+
+    <div class="req">
+      <div class="req-id">DR-2</div>
+      <div class="req-body">
+        <h3>Build a BigEarthNet training subset, not the full archive</h3>
+        <p>110 GiB will not fit in a Colab or Kaggle session and does not need to. Sample <strong>20,000–40,000 co-located S1/S2 patch pairs</strong>, stratified across the 19 CORINE classes, using the official geographic split so train/test spatial correlation stays low. Filter out snow/cloud/shadow patches using the provided parquet metadata.</p>
+        <p>Package the subset as a Kaggle Dataset (or HF dataset repo) so training sessions mount it instead of re-downloading.</p>
+        <div class="ac"><b>Acceptance</b>A &lt;15 GB subset artifact, class histogram documented, loading in a fresh Kaggle notebook in under 3 minutes.</div>
+      </div>
+    </div>
+
+    <div class="req">
+      <div class="req-id">DR-3</div>
+      <div class="req-body">
+        <h3>Acquire genuine Cartosat-2S and EOS-04 scenes as test fixtures</h3>
+        <p>The hidden evaluation set is Cartosat-2S optical and RISAT SAR. Benchmark datasets are 256²–512² PNG-like tiles; a real Cartosat-2S scene is a large multi-band GeoTIFF with its own band ordering, dtype, nodata convention, and scene geometry. Every preprocessing assumption learned on BigEarthNet needs testing against a real scene.</p>
+        <div class="ac"><b>Acceptance</b>At least one Cartosat-2S optical scene and one EOS-04 SAR scene downloaded from Bhoonidhi, opening cleanly through the ingest path, with band count, dtype, CRS, and GSD recorded in the fixture registry.</div>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>License note for the submission.</strong> VRSBench is CC-BY-NC-4.0 and Qwen2.5-VL-3B carries the Qwen Research License — both non-commercial. That is fine for a hackathon and for research evaluation, but state it explicitly in the submission so nobody claims a commercially deployable system. BigEarthNet (CDLA-Permissive), RSVQA (CC-BY-4.0), and CDVQA (Apache-2.0) are unrestricted. SECOND states no license at all — cite the paper and treat it as research-use.
+    </div>
+  </section>
+
+  <!-- ================= 3 ================= -->
+  <section id="models">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2>Model registry requirements</h2>
+    </div>
+
+    <div class="verdict">
+      <span class="lbl">Verdict</span>
+      <p>Do not run three 7B models. On a single 16 GB GPU you cannot hold GeoChat-7B, TEOChat-7B, and a change detector resident at once, and lazy load/unload at 15–30 s per swap will destroy the live demo.</p>
+      <p><strong>Pick one VLM backbone and make everything else a small specialist.</strong> The recommended configuration is a 3B RS-adapted VLM as the single language-vision engine, plus two lightweight CNN/ViT specialists that produce structured facts the VLM verbalizes.</p>
+    </div>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>Model</th><th>Params / base</th><th>Capability</th><th>VRAM fp16</th><th>VRAM 4-bit</th><th>License</th><th>Call</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="nm">remote-sensing-<br>Qwen2.5-VL-3B</td>
+            <td>3B · Qwen2.5-VL-3B<br><span class="mono" style="font-size:.75rem;color:var(--ink-3)">AdaptLLM</span></td>
+            <td>VQA, caption, grounding</td>
+            <td class="mono">≈7 GB</td>
+            <td class="mono">≈3.5 GB</td>
+            <td class="mono">Qwen Research</td>
+            <td><span class="pill p-ok">Primary</span></td>
+          </tr>
+          <tr>
+            <td class="nm">GeoChat-7B</td>
+            <td>7B · LLaVA-1.5 / Vicuna<br><span class="mono" style="font-size:.75rem;color:var(--ink-3)">MBZUAI</span></td>
+            <td>VQA, caption, box grounding</td>
+            <td class="mono">≈14.2 GB</td>
+            <td class="mono">≈6 GB</td>
+            <td class="mono">Apache-2.0<br>+ LLaMA terms</td>
+            <td><span class="pill p-warn">Fallback</span></td>
+          </tr>
+          <tr>
+            <td class="nm">TEOChat-7B</td>
+            <td>7B · Video-LLaVA / LLaMA-2<br><span class="mono" style="font-size:.75rem;color:var(--ink-3)">ermongroup</span></td>
+            <td>Change QA, temporal referring</td>
+            <td class="mono">≈14 GB</td>
+            <td class="mono">≈6 GB</td>
+            <td class="mono">Apache-2.0<br>+ LLaMA terms</td>
+            <td><span class="pill p-warn">Stretch</span></td>
+          </tr>
+          <tr>
+            <td class="nm">EarthDial-4B</td>
+            <td>4B · InternVL2 / Phi-3-mini<br><span class="mono" style="font-size:.75rem;color:var(--ink-3)">RGB · MS · Methane</span></td>
+            <td>Multispectral dialogue</td>
+            <td class="mono">≈9 GB</td>
+            <td class="mono">≈4 GB</td>
+            <td class="mono">MIT</td>
+            <td><span class="pill p-neu">Evaluate</span></td>
+          </tr>
+          <tr>
+            <td class="nm">BigEarthNet ViT</td>
+            <td>ViT-B/8 · 86M<br><span class="mono" style="font-size:.75rem;color:var(--ink-3)">BIFOLD-BigEarthNetv2-0</span></td>
+            <td>19-class land cover</td>
+            <td class="mono">&lt;1 GB</td>
+            <td class="mono">—</td>
+            <td class="mono">Open weights</td>
+            <td><span class="pill p-ok">Specialist</span></td>
+          </tr>
+          <tr>
+            <td class="nm">SatQuery-Fusion<br><span style="font-family:var(--f-mono);font-weight:400;font-size:.78rem;color:var(--ink-3)">(ours)</span></td>
+            <td>ViT-S / ResNet-50<br>12-ch S1+S2 input</td>
+            <td>Optical–SAR fusion,<br>land cover</td>
+            <td class="mono">&lt;1 GB</td>
+            <td class="mono">—</td>
+            <td class="mono">Ours</td>
+            <td><span class="pill p-ok">Build</span></td>
+          </tr>
+          <tr>
+            <td class="nm">Siamese CD head</td>
+            <td>ResNet-18 siamese<br>or ChangeFormer-lite</td>
+            <td>Bi-temporal change mask</td>
+            <td class="mono">&lt;1 GB</td>
+            <td class="mono">—</td>
+            <td class="mono">Ours / MIT</td>
+            <td><span class="pill p-ok">Build</span></td>
+          </tr>
+          <tr>
+            <td class="nm">GeoPixel-7B</td>
+            <td>7B · InternLM2 + SAM-2</td>
+            <td>Pixel grounding</td>
+            <td class="mono">&gt;20 GB</td>
+            <td class="mono">≈10 GB</td>
+            <td class="mono">Research</td>
+            <td><span class="pill p-bad">Cut</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="req">
+      <div class="req-id">MR-1</div>
+      <div class="req-body">
+        <h3>Single resident VLM, specialists on demand</h3>
+        <p>The VLM stays loaded for the process lifetime. Specialists are &lt;1 GB and can all be co-resident. Total steady-state VRAM budget: <strong>≤ 10 GB</strong>, leaving headroom on a 16 GB card and fitting a 12 GB card in 4-bit.</p>
+        <div class="ac"><b>Acceptance</b>Peak VRAM measured under a US-5 cross-modal query stays under budget; no model load occurs after warmup.</div>
+      </div>
+    </div>
+
+    <div class="req">
+      <div class="req-id">MR-2</div>
+      <div class="req-body">
+        <h3>Compositional change analysis, not monolithic change-VLM</h3>
+        <p>Requirement #3 is satisfied by: siamese CD head → binary/semantic change mask → structured change statistics (changed area %, per-class from/to transitions, largest connected components with their bounds) → VLM verbalizes those facts into a change description or change-VQA answer.</p>
+        <p>This is more robust than TEOChat under time pressure, it produces a <em>spatial</em> output for the fusion requirement, and every intermediate is a trace-able artifact. TEOChat remains a registry entry to enable if time allows — it is the stronger scientific answer, but it carries a Video-LLaVA dependency stack pinned to older <code>transformers</code>, which is a real integration cost.</p>
+        <div class="ac"><b>Acceptance</b>CDVQA test split scored end-to-end through the compositional path, with per-question-type accuracy reported.</div>
+      </div>
+    </div>
+
+    <div class="req">
+      <div class="req-id">MR-3</div>
+      <div class="req-body">
+        <h3>Registry entries are declarative and versioned</h3>
+        <p>Every capability is a registry record, not a code branch. Selection reads the registry; adding a model is a config change.</p>
+        <pre><span class="c"># registry/entries/satquery_fusion.yaml</span>
+<span class="k">id</span>: satquery-fusion-v1
+<span class="k">display_name</span>: SatQuery Optical-SAR Fusion Encoder
+<span class="k">version</span>: 1.0.0
+<span class="k">capabilities</span>: [land_cover, cross_modal_fusion]
+<span class="k">modalities</span>: [optical_ms, sar]        <span class="c"># both required</span>
+<span class="k">modality_mode</span>: paired                  <span class="c"># paired | any | all</span>
+<span class="k">image_count</span>: {min: 2, max: 2}
+<span class="k">input_spec</span>:
+  bands:   {optical_ms: 10, sar: 2}
+  dtype:   float32
+  size:    [120, 120]
+  requires_coregistration: true
+<span class="k">output_schema</span>: schemas/multilabel_19.json
+<span class="k">weights</span>:  local://weights/satquery_fusion_v1.safetensors
+<span class="k">device</span>:   cuda:0
+<span class="k">est_vram_mb</span>:    850
+<span class="k">est_latency_ms</span>: 120
+<span class="k">license</span>: internal
+<span class="k">eval</span>:
+  bigearthnet_v2_test: {metric: mAP_macro, value: 0.00}   <span class="c"># filled post-train</span>
+<span class="k">fallback</span>: bigearthnet-vit-s2-v1     <span class="c"># optical-only degradation</span></pre>
+        <div class="ac"><b>Acceptance</b>Registry loads and schema-validates at boot; a deliberately malformed entry fails startup with a named error rather than at query time.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 4 ================= -->
+  <section id="adaptation">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2>Remote-sensing adaptation (PS requirement #1)</h2>
+    </div>
+
+    <div class="verdict">
+      <span class="lbl">Verdict</span>
+      <p>The requirement says <em>“at least one visual/VLM component must be fine-tuned on BigEarthNet or other open remote-sensing training data.”</em> A fine-tuned <strong>visual</strong> component satisfies it. That is the insurance policy, and it is a few GPU-hours of well-trodden supervised learning — not a VLM fine-tune, which you have never done.</p>
+      <p>Run Track A to completion first. Only then attempt Track B.</p>
+    </div>
+
+    <div class="req">
+      <div class="req-id">AR-1</div>
+      <div class="req-body">
+        <h3>Track A — dual-branch S1+S2 encoder <span class="pill p-ok" style="vertical-align:middle">Required</span></h3>
+        <p>Fine-tune a ViT-S or ResNet-50 for 19-class CORINE multi-label classification on the BigEarthNet v2.0 subset, with <strong>12-channel input</strong>: 10 Sentinel-2 bands concatenated with 2 Sentinel-1 bands (VV, VH). Initialise from ImageNet weights, inflating the input stem to 12 channels.</p>
+        <p>This is the single highest-leverage run in the project. BigEarthNet is the only large public archive of <em>co-registered optical and SAR pairs</em> — which is precisely why the problem statement names it alongside a Cartosat/RISAT evaluation set. One training run therefore delivers:</p>
+        <ul>
+          <li>PS requirement #1 — a visual component fine-tuned on BigEarthNet</li>
+          <li>PS requirement #4 — a genuine optical–SAR cross-modal component, rather than two independent predictions stapled together</li>
+          <li>A registry specialist that grounds the VLM's land-cover claims</li>
+        </ul>
+        <p><strong>Budget:</strong> 2–4 GPU-hours on a free T4 or P100 for 30k patches × ~10 epochs at 120×120. Kaggle is the recommended host — 30 GPU-hours/week, 12-hour sessions, and datasets mount without re-downloading. Colab free sessions get reclaimed mid-run.</p>
+        <div class="ac"><b>Acceptance</b>Macro mAP reported on the official BigEarthNet v2.0 geographic test split, for three configurations: S2-only, S1-only, and fused. The fused number must beat both single-modality baselines — that ablation <em>is</em> the evidence for requirement #4.</div>
+      </div>
+    </div>
+
+    <div class="req">
+      <div class="req-id">AR-2</div>
+      <div class="req-body">
+        <h3>Track B — LoRA on the RS-VLM <span class="pill p-warn" style="vertical-align:middle">Target</span></h3>
+        <p>LoRA-adapt <code>AdaptLLM/remote-sensing-Qwen2.5-VL-3B-Instruct</code> so the language model speaks in the vocabulary of your pipeline and answers in the answer-space the benchmarks expect.</p>
+        <p><strong>Training data</strong> — roughly 12–15k instruction samples, mixed:</p>
+        <ul>
+          <li><em>BigEarthNet-derived QA</em> (~6k), template-generated from the 19-class labels and patch metadata: presence questions, dominant-cover questions, and explicitly SAR-referencing questions (“does the radar response indicate open water?”)</li>
+          <li><em>RSVQA-LR train split</em> (~4k), to match benchmark answer formatting</li>
+          <li><em>VRSBench caption + referring</em> (~3k), for the second single-image capability</li>
+          <li><em>Change-summary verbalization</em> (~1k), teaching the model to convert structured change statistics into fluent descriptions</li>
+        </ul>
+        <p><strong>Config:</strong> LoRA rank 16, alpha 32, on attention and MLP projections; vision tower frozen; 4-bit base; gradient checkpointing; 1 epoch. Reported VRAM for Qwen2.5-VL-3B LoRA under LLaMA-Factory is ≈8.9 GB, which fits a free 16 GB T4 with headroom.</p>
+        <p><strong>Budget:</strong> 6–10 GPU-hours. Use LLaMA-Factory or Unsloth rather than writing a training loop — for a first VLM fine-tune, a config file is the difference between shipping and debugging collator shapes at 3 a.m.</p>
+        <div class="ac"><b>Acceptance</b>RSVQA-LR test accuracy for the adapted model beats the un-adapted base by a reported margin on a fixed 500-question subset. If it does not, ship Track A and report the negative result honestly — a documented failed ablation reads far better than a vague claim.</div>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>Hard constraint.</strong> Both tracks complete <em>before</em> the finale and ship as frozen checkpoints committed to the repo or an HF model repo. Fine-tuning inside a 36-hour window, with no prior VLM fine-tuning experience, is the single most reliable way to arrive at hour 30 with nothing running.
+    </div>
+  </section>
+
+  <!-- ================= 5 ================= -->
+  <section id="orchestration">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <h2>Agentic orchestration (PS requirement #5)</h2>
+    </div>
+
+    <div class="verdict">
+      <span class="lbl">Design principle</span>
+      <p>The problem statement says only the <strong>observable execution trace</strong> is evaluated — internal reasoning text is not. That has a direct architectural consequence: <em>the LLM classifies, a deterministic resolver decides.</em></p>
+      <p>If an LLM freely picks tools, the trace records an unreproducible choice. If a rule engine picks tools from typed registry predicates, the trace records a rule ID, the candidates considered, and why each was rejected. The second is auditable; the first is a transcript.</p>
+    </div>
+
+    <h3>Graph topology</h3>
+    <div class="flow">
+      <div class="flow-node"><span class="flow-name">ingest</span><span class="flow-desc">Open every uploaded file with rasterio. Emit a per-image <em>manifest</em>: sha256, driver, CRS, affine transform, shape, dtype, band count, nodata, GSD, footprint polygon, and inferred modality.</span></div>
+      <div class="flow-node"><span class="flow-name">validate</span><span class="flow-desc">Run the typed check suite (VR-1 below). Every check emits <em>name, status, expected, actual</em> — passing checks are logged too, because a trace that only records failures proves nothing.</span></div>
+      <div class="flow-branch">└─ conditional → <b>reject</b> if any check is <code>FATAL</code> · returns a named reason, never a crash</div>
+      <div class="flow-node"><span class="flow-name">classify</span><span class="flow-desc">LLM with structured output (Pydantic / JSON schema) maps the query to a <em>task enum</em> — <code>vqa</code>, <code>caption</code>, <code>grounding</code>, <code>change_describe</code>, <code>change_vqa</code>, <code>cross_modal</code> — plus extracted parameters and a self-reported confidence with alternatives.</span></div>
+      <div class="flow-branch">└─ conditional → <b>clarify</b> if top-1 confidence &lt; threshold or image count contradicts the task</div>
+      <div class="flow-node"><span class="flow-name">plan</span><span class="flow-desc">Deterministic resolver. Filters the registry on <code>capability ∩ modality ∩ image_count ∩ input_spec</code>, ranks survivors by declared eval score, and records the <em>full candidate set with rejection reasons</em>.</span></div>
+      <div class="flow-branch">└─ conditional → <b>degrade</b> to a declared <code>fallback</code> if no candidate matches · e.g. SAR missing → optical-only path, flagged</div>
+      <div class="flow-node"><span class="flow-name">preprocess</span><span class="flow-desc">Per-model input adaptation: band selection, dB conversion and percentile stretch for SAR, tiling for oversized scenes, resampling. Records every transform applied — this is where silent quality loss happens, so it must be visible.</span></div>
+      <div class="flow-node"><span class="flow-name">execute</span><span class="flow-desc">Runs selected tools. Independent tools fan out in parallel. Each step records tool ID, version, resolved params, device, wall-clock ms, and a reference to the raw output.</span></div>
+      <div class="flow-node"><span class="flow-name">fuse</span><span class="flow-desc">Merges text and spatial outputs into one answer payload: prose answer, geometry (boxes/masks in both pixel and geographic coordinates), and supporting evidence naming which model contributed which claim.</span></div>
+      <div class="flow-node"><span class="flow-name">confidence</span><span class="flow-desc">Composite score from named components (CF-1) — never a single opaque number.</span></div>
+      <div class="flow-node"><span class="flow-name">respond</span><span class="flow-desc">Assembles the answer plus the complete trace document and streams it to the client.</span></div>
+    </div>
+
+    <div class="req">
+      <div class="req-id">OR-1</div>
+      <div class="req-body">
+        <h3>Trace is accumulated state, not logging</h3>
+        <p>The trace is a first-class field on the LangGraph state with an append reducer, so every node contributes without any node owning the whole document. Logging is a side effect that can be lost; state is what the graph returns.</p>
+        <pre><span class="k">class</span> TraceEntry(BaseModel):
+    seq:        int
+    node:       str
+    started_at: datetime
+    duration_ms:float
+    status:     Literal["ok", "warn", "fail", "skipped"]
+    summary:    str                <span class="c"># one line, user-facing</span>
+    evidence:   dict               <span class="c"># typed payload, node-specific</span>
+
+<span class="k">class</span> SatQueryState(TypedDict):
+    query:      str
+    images:     list[ImageManifest]
+    validation: list[CheckResult]
+    task:       TaskClassification | None
+    plan:       ExecutionPlan | None
+    outputs:    dict[str, ToolOutput]
+    answer:     Answer | None
+    confidence: ConfidenceBreakdown | None
+    trace:      Annotated[list[TraceEntry], operator.add]   <span class="c"># ← reducer</span></pre>
+        <div class="ac"><b>Acceptance</b>Every completed run exports a JSON trace that replays the decision path with no reference to model reasoning text. Two runs on identical inputs produce identical <code>plan</code> sections.</div>
+      </div>
+    </div>
+
+    <div class="req">
+      <div class="req-id">OR-2</div>
+      <div class="req-body">
+        <h3>Stream the trace to the UI as it builds</h3>
+        <p>Nodes emit over SSE as they complete, so the evaluator watches validation pass, the task get classified, candidates get filtered, and models execute — live, before the answer appears. This is the demo moment. A trace revealed only after the answer reads as post-hoc justification; a trace that builds in front of the judge reads as an agent working.</p>
+        <div class="ac"><b>Acceptance</b>First trace entry renders in the UI within 500 ms of submit, well before the final answer.</div>
+      </div>
+    </div>
+
+    <div class="req">
+      <div class="req-id">CF-1</div>
+      <div class="req-body">
+        <h3>Confidence is a named breakdown</h3>
+        <p>Report components, each in [0,1], with the aggregate and the weakest link surfaced: <em>input quality</em> (co-registration score, cloud/nodata fraction, GSD match), <em>task classification</em> (classifier top-1 margin), <em>model fitness</em> (declared eval score of the selected model on the nearest matching benchmark), and <em>output agreement</em> (whether the VLM's claim is corroborated by the specialist — e.g. VLM says "water present", fusion encoder's water logit).</p>
+        <p>Output agreement is the component that makes this credible rather than decorative, and it is cheap: you already run both models.</p>
+        <div class="ac"><b>Acceptance</b>A query where the VLM and the specialist disagree returns a visibly reduced confidence and names the disagreement in the trace.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 6 ================= -->
+  <section id="geotiff">
+    <div class="sec-head">
+      <span class="sec-num">06</span>
+      <h2>Geospatial input handling</h2>
+    </div>
+
+    <div class="verdict">
+      <span class="lbl">Verdict</span>
+      <p><code>pip install rasterio</code> now ships Windows wheels with GDAL bundled (Python ≥ 3.10) — the old conda-only advice is stale. Use pip wheels for speed; keep a conda-forge environment documented as the fallback, since the wheels omit some optional GDAL drivers. Do not install standalone GDAL.</p>
+    </div>
+
+    <div class="col">
+      <p><strong>Stack:</strong> <code>rasterio</code> for I/O, CRS, transforms, and windowed reads · <code>pyproj</code> for CRS comparison and coordinate transforms · <code>shapely</code> for footprint intersection · <code>numpy</code> for band math. That is the whole dependency set. Add <code>rio-cogeo</code> only if you want COG validation as a nice-to-have trace line.</p>
+    </div>
+
+    <div class="req">
+      <div class="req-id">VR-1</div>
+      <div class="req-body">
+        <h3>Validation check suite</h3>
+        <p>Each check is a named function returning <code>CheckResult(name, status, expected, actual, message)</code>. Status is <code>PASS</code>, <code>WARN</code>, or <code>FATAL</code>. Only <code>FATAL</code> halts.</p>
+
+        <h4>Per image</h4>
+        <ul>
+          <li><code>readable</code> — opens via rasterio; driver recorded <span class="pill p-bad">FATAL</span></li>
+          <li><code>format_allowed</code> — GeoTIFF/TIFF always; PNG/JPEG accepted only when the run is flagged as benchmark mode <span class="pill p-bad">FATAL</span></li>
+          <li><code>has_crs</code> — <code>src.crs is not None</code>; absent means not georeferenced <span class="pill p-warn">WARN</span></li>
+          <li><code>has_transform</code> — affine is not the identity default <span class="pill p-warn">WARN</span></li>
+          <li><code>band_count_sane</code> — 1–13; recorded for modality inference <span class="pill p-warn">WARN</span></li>
+          <li><code>nodata_fraction</code> — fraction of nodata/zero pixels; &gt;40% degrades confidence <span class="pill p-warn">WARN</span></li>
+          <li><code>dimensions</code> — flags oversized scenes that must route through tiling <span class="pill p-warn">WARN</span></li>
+        </ul>
+
+        <h4>Per pair</h4>
+        <ul>
+          <li><code>crs_match</code> — identical CRS, or reprojectable; mismatched but reprojectable is a WARN with the transform logged</li>
+          <li><code>footprint_overlap</code> — <code>intersection.area / min(area_a, area_b)</code>; ≥ 0.80 required to claim co-registration <span class="pill p-bad">FATAL</span> below 0.30</li>
+          <li><code>gsd_ratio</code> — <code>src.res</code> comparison; ratio outside [0.5, 2.0] means one must be resampled, recorded explicitly</li>
+          <li><code>grid_alignment</code> — origin offset modulo pixel size; sub-pixel residual is the real test of co-registration, and it is what distinguishes "same area" from "same grid"</li>
+          <li><code>modality_distinct</code> — for cross-modal tasks, the two images must infer to different modalities</li>
+          <li><code>temporal_order</code> — reads acquisition date from TIFF tags where present; orders the pair, warns if unavailable</li>
+        </ul>
+
+        <div class="ac"><b>Acceptance</b>A deliberately mismatched pair (different CRS, 60% overlap, 4× GSD difference) produces three specific named WARNs and a reduced confidence — not a crash and not a silent success.</div>
+      </div>
+    </div>
+
+    <div class="req">
+      <div class="req-id">VR-2</div>
+      <div class="req-body">
+        <h3>Modality inference from pixels, not filenames</h3>
+        <p>Infer from band count, dtype, and value distribution; use filename and TIFF tags only as a corroborating hint, and log both the inference and the hint.</p>
+        <ul>
+          <li><strong>SAR</strong> — 1–2 bands, float32, very wide dynamic range, strongly right-skewed histogram (linear backscatter), or already in dB with negative values</li>
+          <li><strong>Optical RGB</strong> — 3 bands, uint8</li>
+          <li><strong>Optical multispectral</strong> — 4–13 bands, uint16</li>
+        </ul>
+        <div class="ac"><b>Acceptance</b>Correct modality on all Bhoonidhi fixtures and on BigEarthNet S1/S2 patches, with filenames stripped.</div>
+      </div>
+    </div>
+
+    <div class="req">
+      <div class="req-id">VR-3</div>
+      <div class="req-body">
+        <h3>SAR preprocessing — the quality cliff</h3>
+        <p>This is where teams lose the cross-modal requirement without noticing. A naive min–max stretch on SAR backscatter produces a near-black image, because a handful of bright scatterers dominate the range. Feed that to a VLM and it describes an empty scene, confidently.</p>
+        <p>Required pipeline: linear → dB (<code>10·log10</code>, guarding zeros) → clip to the 2nd/98th percentile → scale to 8-bit → replicate to 3 channels. For dual-pol, VV/VH/ratio is a more informative false-colour composite than a grey replication, and it costs one line.</p>
+        <div class="ac"><b>Acceptance</b>Side-by-side visual check on a real EOS-04 scene: the naive stretch and the dB-percentile stretch are both rendered in the fixture notebook, with the difference documented. The VLM produces a non-degenerate description on the latter.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 7 ================= -->
+  <section id="risks">
+    <div class="sec-head">
+      <span class="sec-num">07</span>
+      <h2>Ranked risks and pre-validation</h2>
+    </div>
+
+    <div class="col">
+      <p>Ordered by expected damage at hour 30 of 36 — probability of occurrence multiplied by how much of the deliverable it takes down. Every entry has an action that can be completed <em>now</em>, before the finale.</p>
+    </div>
+
+    <div class="risk">
+      <div class="risk-rank">1</div>
+      <div>
+        <p class="risk-t">Environment collapse on Windows</p>
+        <p class="risk-d">Remote-sensing VLM repos pin old <code>transformers</code> versions and assume <code>flash-attn</code>, which does not build cleanly on Windows. Two model repos with conflicting pins in one environment is a multi-hour hole with no partial credit.</p>
+        <p class="risk-m"><b>Pre-validate</b> Build and freeze the full inference environment inside WSL2 or Docker <em>today</em>. Run one real query through each candidate model. Export the exact lockfile. Choosing the 3B Qwen path largely dissolves this — it runs on stock <code>transformers</code> with no custom fork.</p>
+      </div>
+      <div class="risk-tag"><span class="pill p-bad">Critical</span></div>
+    </div>
+
+    <div class="risk">
+      <div class="risk-rank">2</div>
+      <div>
+        <p class="risk-t">Hidden ISRO set breaks the ingest path</p>
+        <p class="risk-d">Every benchmark is a small tile; the hidden set is real Cartosat-2S and RISAT scenes with unfamiliar band ordering, dtype, nodata convention, and scene size. A pipeline that only ever saw 512² PNGs fails on the one input that counts.</p>
+        <p class="risk-m"><b>Pre-validate</b> Register on Bhoonidhi, pull real Cartosat-2S and EOS-04 GeoTIFFs, and make them permanent test fixtures. Build the tiling path early — you will be handed a scene, not a patch.</p>
+      </div>
+      <div class="risk-tag"><span class="pill p-bad">Critical</span></div>
+    </div>
+
+    <div class="risk">
+      <div class="risk-rank">3</div>
+      <div>
+        <p class="risk-t">Cross-modal fusion ends up cosmetic</p>
+        <p class="risk-d">The requirement most likely to be technically unmet while appearing met. Running an optical model and a SAR model separately and concatenating their text is not extracting complementary information, and a domain judge will ask exactly that question.</p>
+        <p class="risk-m"><b>Pre-validate</b> Ship AR-1's fused encoder with the three-way ablation (S2-only / S1-only / fused). A single table where fused beats both is the entire defence, and it comes free with the run you were already doing.</p>
+      </div>
+      <div class="risk-tag"><span class="pill p-bad">Critical</span></div>
+    </div>
+
+    <div class="risk">
+      <div class="risk-rank">4</div>
+      <div>
+        <p class="risk-t">SECOND download unavailable</p>
+        <p class="risk-d">CDVQA imagery depends on one Google Drive link with no license and no mirror. If it is quota-limited during the finale, the mandatory change-analysis evaluation has no data.</p>
+        <p class="risk-m"><b>Pre-validate</b> Download and mirror today (DR-1). Verify filename cross-match against the CDVQA JSONs before assuming they align.</p>
+      </div>
+      <div class="risk-tag"><span class="pill p-warn">High</span></div>
+    </div>
+
+    <div class="risk">
+      <div class="risk-rank">5</div>
+      <div>
+        <p class="risk-t">Fine-tune produces no measurable gain</p>
+        <p class="risk-d">A LoRA run that trains cleanly but does not beat the base model leaves requirement #1 defensible only on paper.</p>
+        <p class="risk-m"><b>Pre-validate</b> Track A is the insurance and is near-certain to work — supervised multi-label classification with a labelled dataset is well-trodden. Fix the eval subset and score the base model <em>before</em> training, so you can measure a delta rather than hope for one.</p>
+      </div>
+      <div class="risk-tag"><span class="pill p-warn">High</span></div>
+    </div>
+
+    <div class="risk">
+      <div class="risk-rank">6</div>
+      <div>
+        <p class="risk-t">VRAM exhaustion mid-demo</p>
+        <p class="risk-d">Two 7B models plus specialists will not co-reside on 16 GB. Load/unload swapping adds 15–30 s per query — fatal for a live demo.</p>
+        <p class="risk-m"><b>Pre-validate</b> Commit to the MR-1 single-VLM budget now and measure peak VRAM on the heaviest query type. This is an architecture decision, not a tuning problem — deciding it late means rewriting the registry.</p>
+      </div>
+      <div class="risk-tag"><span class="pill p-warn">High</span></div>
+    </div>
+
+    <div class="risk">
+      <div class="risk-rank">7</div>
+      <div>
+        <p class="risk-t">Frontend consumes the last eight hours</p>
+        <p class="risk-d">The natural failure mode for a backend-strong team: the agent works, and the demo cannot show it.</p>
+        <p class="risk-m"><b>Pre-validate</b> Build the React shell — upload, query box, streaming trace panel, image overlay canvas — before the finale, against a mocked SSE stream. The trace viewer is the only bespoke component that carries evaluation weight; everything else can be an unstyled component library.</p>
+      </div>
+      <div class="risk-tag"><span class="pill p-warn">High</span></div>
+    </div>
+
+    <div class="risk">
+      <div class="risk-rank">8</div>
+      <div>
+        <p class="risk-t">Weight downloads inside the venue</p>
+        <p class="risk-d">Tens of GB of checkpoints over contested hackathon wifi, at the worst possible moment.</p>
+        <p class="risk-m"><b>Pre-validate</b> Pre-cache every checkpoint to local disk and carry it physically. Set <code>HF_HUB_OFFLINE=1</code> and confirm the system boots with networking disabled.</p>
+      </div>
+      <div class="risk-tag"><span class="pill p-neu">Medium</span></div>
+    </div>
+
+    <div class="risk">
+      <div class="risk-rank">9</div>
+      <div>
+        <p class="risk-t">Change-VQA accuracy is poor</p>
+        <p class="risk-d">CDVQA answers span six land-cover classes with counting and comparison question types; a weak change mask propagates into every answer.</p>
+        <p class="risk-m"><b>Pre-validate</b> Score the compositional path on CDVQA's test split early. If the mask is the bottleneck, the fix is a better CD head — a bounded, well-understood problem — not a better prompt.</p>
+      </div>
+      <div class="risk-tag"><span class="pill p-neu">Medium</span></div>
+    </div>
+
+    <div class="risk">
+      <div class="risk-rank">10</div>
+      <div>
+        <p class="risk-t">Live demo failure</p>
+        <p class="risk-d">Any of the above, on stage, in front of judges.</p>
+        <p class="risk-m"><b>Pre-validate</b> Build a fixture mode that replays saved traces at realistic speed against known-good inputs, plus a recorded walkthrough. Demo from fixtures; offer live as the encore.</p>
+      </div>
+      <div class="risk-tag"><span class="pill p-neu">Medium</span></div>
+    </div>
+  </section>
+
+  <!-- ================= 8 ================= -->
+  <section id="plan">
+    <div class="sec-head">
+      <span class="sec-num">08</span>
+      <h2>Delivery plan</h2>
+    </div>
+
+    <div class="col">
+      <p>The finale is an integration window, not a build window. Everything with an unbounded failure mode — environments, training, data acquisition — happens before it.</p>
+    </div>
+
+    <h3>Pre-finale</h3>
+
+    <div class="phase">
+      <div class="phase-when">Week 1</div>
+      <div class="phase-what">
+        <b>Secure the inputs</b>
+        <ul>
+          <li>Mirror SECOND; cross-check against CDVQA JSONs <span class="mono" style="font-size:.8em">DR-1</span></li>
+          <li>Pull RSVQA-LR/HR, VRSBench; register on Bhoonidhi and pull real Cartosat-2S + EOS-04 scenes <span class="mono" style="font-size:.8em">DR-3</span></li>
+          <li>Build and publish the BigEarthNet S1+S2 subset <span class="mono" style="font-size:.8em">DR-2</span></li>
+          <li>Freeze the inference environment in WSL2/Docker; one real query through the 3B VLM</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-when">Week 2</div>
+      <div class="phase-what">
+        <b>Train and freeze</b>
+        <ul>
+          <li>Track A fused encoder + three-way ablation table <span class="mono" style="font-size:.8em">AR-1</span></li>
+          <li>Siamese CD head on SECOND</li>
+          <li>Score the base VLM on the fixed eval subset — the pre-training baseline</li>
+          <li>Track B LoRA if Track A is done and reported <span class="mono" style="font-size:.8em">AR-2</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-when">Week 3</div>
+      <div class="phase-what">
+        <b>Skeleton and shell</b>
+        <ul>
+          <li>rasterio ingest + full validation suite, tested against Bhoonidhi fixtures <span class="mono" style="font-size:.8em">VR-1…3</span></li>
+          <li>Registry schema, loader, and resolver with unit tests <span class="mono" style="font-size:.8em">MR-3</span></li>
+          <li>React shell + streaming trace panel against a mocked SSE stream <span class="mono" style="font-size:.8em">OR-2</span></li>
+          <li>Pre-cache all weights; verify offline boot</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>The 36 hours</h3>
+
+    <div class="phase">
+      <div class="phase-when">H0 – H6</div>
+      <div class="phase-what">
+        <b>Wire the graph</b>
+        <ul><li>All nine LangGraph nodes with real signatures and stub bodies; trace reducer working end-to-end; one hardcoded path returns a complete trace.</li></ul>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-when">H6 – H14</div>
+      <div class="phase-what">
+        <b>Single-image path</b>
+        <ul><li>VQA + captioning + grounding live through the real VLM. Overlay rendering for boxes. <strong>Checkpoint: requirement #2 demonstrable.</strong></li></ul>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-when">H14 – H22</div>
+      <div class="phase-what">
+        <b>Change path</b>
+        <ul><li>Bi-temporal validation, CD head, change statistics, VLM verbalization, change-VQA. <strong>Checkpoint: requirement #3 demonstrable.</strong></li></ul>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-when">H22 – H28</div>
+      <div class="phase-what">
+        <b>Cross-modal path</b>
+        <ul><li>Optical/SAR pair validation, SAR preprocessing, fused encoder in the loop, fusion narrative naming each sensor's contribution. <strong>Checkpoint: requirement #4 demonstrable.</strong></li></ul>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-when">H28 – H32</div>
+      <div class="phase-what">
+        <b>Freeze</b>
+        <ul><li>Confidence breakdown, trace export, error paths. <strong>Feature freeze at H32 — no exceptions.</strong> Anything unfinished gets cut and named in the submission.</li></ul>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-when">H32 – H36</div>
+      <div class="phase-what">
+        <b>Demo</b>
+        <ul><li>Fixture mode, recorded walkthrough, eval tables assembled, README and slides. Rehearse twice.</li></ul>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>Sequencing rationale.</strong> Requirements #2, #3, and #4 are ordered by descending certainty and each ends at a demonstrable checkpoint. If the build runs late, you lose the cross-modal path last rather than losing everything partially — and the fused encoder from AR-1 still evidences requirement #4 in the report even if its UI path is unfinished.
+    </div>
+  </section>
+
+  <!-- ================= 9 ================= -->
+  <section id="open">
+    <div class="sec-head">
+      <span class="sec-num">09</span>
+      <h2>Open questions</h2>
+    </div>
+
+    <div class="col">
+      <ul>
+        <li><strong>Cartosat-2S band configuration in the hidden set.</strong> Panchromatic only, or MX four-band? This changes what the optical branch receives and whether the fused encoder's 10-band S2 stem needs a projection layer. Resolve empirically from Bhoonidhi fixtures.</li>
+        <li><strong>RISAT/EOS-04 product level.</strong> Whether the SAR arrives as calibrated backscatter or raw DN determines whether VR-3's dB conversion is correct or double-applied. Read the product metadata rather than assuming.</li>
+        <li><strong>EarthDial SAR checkpoint.</strong> The paper claims SAR in its instruction mix, but only RGB, MS, and Methane/UHI checkpoints appear to be released. If a SAR checkpoint exists, it is a strong shortcut for requirement #4 and worth an hour to confirm.</li>
+        <li><strong>Trace format expectations.</strong> The PS mandates an auditable trace but does not specify a schema. Ship JSON with a rendered human view and state the schema explicitly in the README.</li>
+        <li><strong>Scene-scale queries.</strong> If a query concerns a full scene rather than a tile, aggregation across tiles is an unspecified design decision. Simplest defensible answer: tile, run per-tile, aggregate with counts and spatial extents, and record the tiling in the trace.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    SatQuery AI · Product Requirements v1.0 · SIH26167 · compiled 30 August 2026<br>
+    Dataset availability, sizes, licenses, and model specifications verified against primary sources on this date. Figures marked as estimates — VRAM, GPU-hours — are planning numbers, not measurements.
+  </footer>
+
+</div>

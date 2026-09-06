@@ -1,0 +1,4 @@
+variant,num_train,num_val,num_classes,micro_f1,macro_f1
+s2,3000,800,19,0.704,0.35
+s1,3000,800,19,0.658,0.285
+fused,3000,800,19,0.705,0.368

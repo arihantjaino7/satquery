@@ -1,0 +1,24 @@
+# cdvqa-siamese: bi-temporal change-detection specialist. Requires exactly
+# two images of the same optical modality, taken at different times. Named
+# after the CDVQA change-detection-VQA task family (Yuan et al., 2022) as a
+# plausible stand-in; the real Step 8 build is a siamese ResNet-18 on SECOND.
+#
+# eval_scores are PLACEHOLDER numbers for prototype ranking only.
+
+id: cdvqa-siamese
+version: "0.1.0-stub"
+capabilities:
+  - change_detection
+modalities:
+  - optical_rgb
+  - optical_ms
+image_count:
+  min: 2
+  max: 2
+input_spec: "exactly 2 co-registered optical images of the same modality, before/after"
+weights: stub
+est_vram_mb: 3000
+license: apache-2.0
+eval_scores:
+  change_detection: 0.67
+fallback: diff-unet-baseline

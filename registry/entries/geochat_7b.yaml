@@ -1,0 +1,30 @@
+# geochat-7b: single-image remote-sensing VLM (grounded VQA + region captioning).
+# Modeled loosely on GeoChat (Kuckreja et al., 2023) as a realistic stand-in
+# for what a real multi-task RS-VLM in this weight class looks like.
+#
+# eval_scores are PLACEHOLDER numbers for prototype ranking only - not
+# published GeoChat benchmark results. weights is "stub" until Step 5+ wires
+# in a real model; 7B is far past the 4GB RTX 3050's budget, which is
+# exactly why it stays stubbed for this prototype (see est_vram_mb below).
+
+id: geochat-7b
+version: "0.1.0-stub"
+capabilities:
+  - vqa
+  - captioning
+  - grounding
+modalities:
+  - optical_rgb
+  - optical_ms
+image_count:
+  min: 1
+  max: 1
+input_spec: "single georeferenced optical tile, any GSD, RGB or multispectral (true-colour bands auto-selected)"
+weights: stub
+est_vram_mb: 16000
+license: apache-2.0
+eval_scores:
+  vqa: 0.62
+  captioning: 0.55
+  grounding: 0.48
+fallback: rsvqa-baseline

@@ -1,0 +1,26 @@
+# skysense-fusion: cross-modal optical+SAR fusion tool. Requires exactly one
+# optical and one SAR image (2 images, both listed modalities). Named after
+# SkySense (Guo et al., 2024), a real multi-modal remote-sensing foundation
+# model, as a plausible stand-in for a tool in this class.
+#
+# eval_scores are PLACEHOLDER numbers for prototype ranking only.
+
+id: skysense-fusion
+version: "0.1.0-stub"
+capabilities:
+  - cross_modal_fusion
+  - vqa
+modalities:
+  - optical_ms
+  - sar
+image_count:
+  min: 2
+  max: 2
+input_spec: "exactly 2 co-registered images covering both optical_ms and sar of the same scene/date"
+weights: stub
+est_vram_mb: 12000
+license: cc-by-nc-4.0
+eval_scores:
+  cross_modal_fusion: 0.58
+  vqa: 0.50
+fallback: null

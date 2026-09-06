@@ -1,0 +1,24 @@
+# rsvqa-baseline: a small, cheap single-image VQA-only model - the losing
+# candidate against geochat-7b for the "vqa" capability, and the one that
+# actually fits the 4GB RTX 3050 (unlike geochat-7b). Named after the RSVQA
+# benchmark/task family (Lobry et al., 2020), not a specific checkpoint.
+#
+# eval_scores are PLACEHOLDER numbers for prototype ranking only.
+
+id: rsvqa-baseline
+version: "0.1.0-stub"
+capabilities:
+  - vqa
+modalities:
+  - optical_rgb
+  - optical_ms
+image_count:
+  min: 1
+  max: 1
+input_spec: "single georeferenced optical tile, any GSD"
+weights: stub
+est_vram_mb: 2000
+license: mit
+eval_scores:
+  vqa: 0.41
+fallback: geochat-7b

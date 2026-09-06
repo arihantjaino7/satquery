@@ -1,0 +1,20 @@
+# sar-captioner-lite: single-image SAR-only captioning model. Exists so
+# "captioning" has a real second candidate to reject against geochat-7b
+# whenever the requested modality is SAR (geochat-7b only supports optical).
+
+id: sar-captioner-lite
+version: "0.1.0-stub"
+capabilities:
+  - captioning
+modalities:
+  - sar
+image_count:
+  min: 1
+  max: 1
+input_spec: "single georeferenced SAR scene, single- or dual-pol"
+weights: stub
+est_vram_mb: 1800
+license: apache-2.0
+eval_scores:
+  captioning: 0.39
+fallback: null

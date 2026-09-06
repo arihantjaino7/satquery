@@ -1,0 +1,22 @@
+# diff-unet-baseline: a plain difference-image U-Net - the losing candidate
+# against cdvqa-siamese for "change_detection". Same modality/image_count
+# window, weaker eval score, so the resolver's ranking (not just filtering)
+# has something real to exercise.
+
+id: diff-unet-baseline
+version: "0.1.0-stub"
+capabilities:
+  - change_detection
+modalities:
+  - optical_rgb
+  - optical_ms
+image_count:
+  min: 2
+  max: 2
+input_spec: "exactly 2 co-registered optical images of the same modality, before/after"
+weights: stub
+est_vram_mb: 1500
+license: mit
+eval_scores:
+  change_detection: 0.44
+fallback: cdvqa-siamese
